@@ -85,6 +85,26 @@ app.get("/images/:filename", (req, res) => {
   });
 });
 
+// Endpunkt zum Löschen eines Bildes
+app.delete("/images/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const imagePath = path.join(__dirname, "images", filename);
+
+  fs.unlink(imagePath, err => {
+    if (err) {
+      console.error("Fehler beim Löschen der Datei:", err);
+      return res.status(500).send("Fehler beim Löschen der Datei.");
+    }
+
+    // Metadaten aus der JSON-Datei entfernen
+    const images = JSON.parse(fs.readFileSync("images.json", "utf8"));
+    const updatedImages = images.filter(image => image.filename !== filename);
+    fs.writeFileSync("images.json", JSON.stringify(updatedImages, null, 2));
+
+    res.send("Bild erfolgreich gelöscht.");
+  });
+});
+
 // Server starten
 app.listen(PORT, () => {
   console.log(`Server läuft auf Port ${PORT}`);
