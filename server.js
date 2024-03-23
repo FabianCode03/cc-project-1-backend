@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
 });
 
 // Endpunkt zum Hochladen eines Bildes
+app.options("/upload", cors()); // Aktiviert CORS-Präfluganfragen für den /upload-Endpunkt
 app.post("/upload", (req, res) => {
   if (!req.body || !req.body.image) {
     console.log("Kein Bild im Request gefunden.");
