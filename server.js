@@ -50,7 +50,11 @@ app.post("/upload", (req, res) => {
     }
 
     // Metadaten zum JSON hinzufügen
-    const imageDataJSON = { filename, path: imagePath };
+    const imageDataJSON = {
+      filename,
+      path: imagePath,
+      url: `http://cc-project-1-backend.azurewebsites.net/images/${filename}`,
+    };
     const images = JSON.parse(fs.readFileSync("images.json", "utf8"));
     images.push(imageDataJSON);
     fs.writeFileSync("images.json", JSON.stringify(images, null, 2));
@@ -64,6 +68,21 @@ app.get("/images", (req, res) => {
   // Metadaten aus der JSON-Datei lesen
   const images = JSON.parse(fs.readFileSync("images.json", "utf8"));
   res.json(images);
+});
+
+// Endpunkt zum herunterladen eines Bildes
+app.get("/images/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const imagePath = path.join(__dirname, "images", filename);
+
+  fs.readFile(imagePath, { encoding: "base64" }, (err, data) => {
+    if (err) {
+      console.error("Fehler beim Lesen der Datei:", err);
+      return res.status(500).send("Fehler beim Lesen der Datei.");
+    }
+
+    res.send(data);
+  });
 });
 
 // Server starten
