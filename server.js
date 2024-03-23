@@ -1,10 +1,14 @@
 const { log } = require("console");
 const express = require("express");
+const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Cors Middleware
+app.use(cors());
 
 // Middleware für JSON-Parsing
 app.use(express.json());
