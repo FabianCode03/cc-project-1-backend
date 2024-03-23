@@ -7,12 +7,19 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Cors Middleware
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+
 app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+  "/proxy",
+  createProxyMiddleware({
+    target: "https://umweltbundesamt.api.proxy.bund.dev",
+    changeOrigin: true,
+    pathRewrite: {
+      "^/proxy": "", // remove base path
+    },
   })
 );
 
