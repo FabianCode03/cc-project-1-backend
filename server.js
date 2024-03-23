@@ -64,6 +64,7 @@ app.post("/upload", (req, res) => {
 });
 
 // Endpunkt zum Abrufen aller Bilder
+app.options("/images", cors());
 app.get("/images", (req, res) => {
   // Metadaten aus der JSON-Datei lesen
   const images = JSON.parse(fs.readFileSync("images.json", "utf8"));
@@ -71,6 +72,7 @@ app.get("/images", (req, res) => {
 });
 
 // Endpunkt zum herunterladen eines Bildes
+app.options("/images/:filename", cors());
 app.get("/images/:filename", (req, res) => {
   const filename = req.params.filename;
   const imagePath = path.join(__dirname, "images", filename);
