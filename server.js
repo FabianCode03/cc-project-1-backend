@@ -1,3 +1,4 @@
+const { log } = require("console");
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -8,6 +9,12 @@ const PORT = process.env.PORT || 3000;
 // Middleware für JSON-Parsing
 app.use(express.json());
 
+// Middleware für Logging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} to ${req.url}`);
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send("Willkommen im Bild-Upload-Service!");
 });
@@ -15,11 +22,13 @@ app.get("/", (req, res) => {
 // Endpunkt zum Hochladen eines Bildes
 app.post("/upload", (req, res) => {
   if (!req.body || !req.body.image) {
+    console.log("Kein Bild im Request gefunden.");
     return res.status(400).send("Bitte ein Bild im Base64-Format senden.");
   }
 
   // Bild aus dem Request extrahieren
   const imageData = req.body.image;
+  console.log("Bild empfangen.", imageData);
   // Bild in einen Buffer konvertieren
   const imageBuffer = Buffer.from(imageData, "base64");
   // Eindeutigen Dateinamen generieren
